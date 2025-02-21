@@ -1,0 +1,25 @@
+app:
+  env: "local"
+  port: 8005
+
+database:
+  name: "ecommerce"
+  user: "root"
+  password: "root"
+  host: "localhost"
+  port: 5432
+  additional_parameters: "charset=utf8&parseTime=true&loc=Asia%2FJakarta"
+  max_open: 0
+  max_idle: 2
+  max_lifetime: "4m0s"
+
+cache:
+  host: "localhost"
+  port: 6380
+  dial_timeout: 5s
+  read_timeout: 10s
+  write_timeout: 10s
+  idle_timeout: 60s
+  max_lifetime: 5m
+  max_idle: 20
+  max_active: 50
