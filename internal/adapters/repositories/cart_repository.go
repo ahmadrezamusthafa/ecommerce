@@ -36,7 +36,7 @@ func (r *cartRepository) GetCartByUserID(ctx context.Context, userID string) (en
 	defer cancel()
 
 	var cart entity.Cart
-	err := r.db.WithContext(ctx).Preload("Items").Where("user_id = ?", userID).First(&cart).Error
+	err := r.db.WithContext(ctx).Preload("Items.Product").Where("user_id = ?", userID).First(&cart).Error
 	if err != nil {
 		return entity.Cart{}, err
 	}
