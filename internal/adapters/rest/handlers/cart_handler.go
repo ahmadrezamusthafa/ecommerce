@@ -123,5 +123,5 @@ func (h *CartHandler) RemoveItemFromCart(c *gin.Context) {
 		return
 	}
 
-	apiresponse.Success(c, productID, "Item added successfully")
+	apiresponse.Success(c, productID, "Item removed successfully")
 }
