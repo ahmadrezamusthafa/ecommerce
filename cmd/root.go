@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/config"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/rest"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/cache"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/database"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
@@ -51,4 +52,7 @@ func start() {
 
 	b, _ := json.Marshal(db)
 	fmt.Println(string(b))
+
+	httpRouter := rest.InitRouter(cfg)
+	httpRouter.Run()
 }
