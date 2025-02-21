@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity/requests"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
@@ -118,6 +119,11 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	var req requests.UserLoginRequest
 	if bindErr = c.ShouldBindJSON(&req); bindErr != nil {
+		return
+	}
+
+	if req.Email == "" && req.Username == "" {
+		bindErr = errors.New("email or username is required")
 		return
 	}
 
