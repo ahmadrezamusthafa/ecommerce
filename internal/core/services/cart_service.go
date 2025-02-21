@@ -14,10 +14,10 @@ type cartService struct {
 	sessionCfg     *session.Config
 }
 
-func NewCartService(sessionCfg *session.Config, productRepository ports.ICartRepository) ports.ICartService {
+func NewCartService(sessionCfg *session.Config, cartRepository ports.ICartRepository) ports.ICartService {
 	return &cartService{
 		sessionCfg:     sessionCfg,
-		cartRepository: productRepository,
+		cartRepository: cartRepository,
 	}
 }
 
