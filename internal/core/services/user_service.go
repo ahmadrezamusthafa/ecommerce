@@ -19,3 +19,7 @@ func NewUserService(userRepository ports.IUserRepository) ports.IUserService {
 func (s *userService) CreateUser(ctx context.Context, user entity.User) (entity.User, error) {
 	return s.userRepository.Create(ctx, user)
 }
+
+func (s *userService) UpdateUser(ctx context.Context, user entity.User) (entity.User, error) {
+	return s.userRepository.Update(ctx, user)
+}

@@ -7,4 +7,5 @@ import (
 
 type IUserService interface {
 	CreateUser(ctx context.Context, user entity.User) (entity.User, error)
+	UpdateUser(ctx context.Context, user entity.User) (entity.User, error)
 }

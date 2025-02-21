@@ -7,4 +7,5 @@ import (
 
 type IUserRepository interface {
 	Create(ctx context.Context, user entity.User) (entity.User, error)
+	Update(ctx context.Context, user entity.User) (entity.User, error)
 }

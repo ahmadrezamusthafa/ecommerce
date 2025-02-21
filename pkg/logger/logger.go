@@ -11,10 +11,10 @@ const TagRequestID = "request_id"
 
 var log *logrus.Logger
 
-func init() {
+func Init() {
 	log = logrus.New()
-	strLevel, ok := os.LookupEnv("LOG_LEVEL")
-	if !ok {
+	strLevel := os.Getenv("LOG_LEVEL")
+	if strLevel == "" {
 		strLevel = "debug"
 	}
 

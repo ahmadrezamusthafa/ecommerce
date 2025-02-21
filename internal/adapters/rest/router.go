@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/config"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/rest/handlers"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/rest/middlewares"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/session"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/shared/constants"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -25,16 +28,29 @@ type Router struct {
 func InitRouter(cfg *config.Configuration,
 	serviceContainer *services.ServiceContainer) *Router {
 	router := gin.Default()
-
+	sessionCfg := prepareSessionConfig()
 	userHandler := handlers.NewUserHandler(serviceContainer)
+
 	apiV1 := router.Group("/api/v1")
 	apiV1.POST("/user/register", userHandler.RegisterUser)
+	apiV1.PUT("/user/update", middlewares.AuthMiddleware(sessionCfg), userHandler.UpdateUser)
 
 	return &Router{
 		Engine:           router,
 		cfg:              cfg,
 		serviceContainer: serviceContainer,
 	}
+}
+
+func prepareSessionConfig() *session.Config {
+	secretKey := os.Getenv("JWT_SECRET")
+	expiration := os.Getenv("JWT_EXPIRATION")
+	duration, err := time.ParseDuration(expiration)
+	if err != nil {
+		duration = constants.DefaultSessionExpiration
+	}
+
+	return session.NewSession(secretKey, duration)
 }
 
 func (router *Router) Run() {
