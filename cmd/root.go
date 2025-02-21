@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/config"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/repositories"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/rest"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/cache"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/database"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
@@ -50,9 +51,11 @@ func start() {
 		logger.Info("Connected to cache successfully")
 	}
 
-	b, _ := json.Marshal(db)
-	fmt.Println(string(b))
+	userRepository := repositories.NewUserRepository(db)
+	userService := services.NewUserService(userRepository)
 
-	httpRouter := rest.InitRouter(cfg)
+	serviceContainer := services.NewServiceContainer(userService)
+
+	httpRouter := rest.InitRouter(cfg, serviceContainer)
 	httpRouter.Run()
 }

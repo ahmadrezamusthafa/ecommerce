@@ -1,13 +1,21 @@
 package services
 
-import "github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
+import (
+	"context"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
+)
 
 type userService struct {
 	userRepository ports.IUserRepository
 }
 
-func NewUserService(ruleRepository ports.IUserRepository) ports.IUserService {
+func NewUserService(userRepository ports.IUserRepository) ports.IUserService {
 	return &userService{
-		userRepository: ruleRepository,
+		userRepository: userRepository,
 	}
+}
+
+func (s *userService) CreateUser(ctx context.Context, user entity.User) (entity.User, error) {
+	return s.userRepository.Create(ctx, user)
 }

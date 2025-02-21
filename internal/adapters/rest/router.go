@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/config"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/rest/handlers"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -16,15 +18,22 @@ import (
 
 type Router struct {
 	*gin.Engine
-	cfg *config.Configuration
+	cfg              *config.Configuration
+	serviceContainer *services.ServiceContainer
 }
 
-func InitRouter(cfg *config.Configuration) *Router {
+func InitRouter(cfg *config.Configuration,
+	serviceContainer *services.ServiceContainer) *Router {
 	router := gin.Default()
 
+	userHandler := handlers.NewUserHandler(serviceContainer)
+	apiV1 := router.Group("/api/v1")
+	apiV1.POST("/user/register", userHandler.RegisterUser)
+
 	return &Router{
-		Engine: router,
-		cfg:    cfg,
+		Engine:           router,
+		cfg:              cfg,
+		serviceContainer: serviceContainer,
 	}
 }
 
