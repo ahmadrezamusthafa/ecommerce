@@ -1,0 +1,11 @@
+bin/
+vendor/
+*/vendor/
+*.log.*
+*.log
+*.idea
+*.db
+*~
+\#*\#
+.\#*
+ecommerce
