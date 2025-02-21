@@ -6,6 +6,7 @@ import (
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/shared/constants"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -23,6 +24,7 @@ func (r *cartRepository) CreateCart(ctx context.Context, cart entity.Cart) (enti
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
+	cart.ID = uuid.NewString()
 	if err := r.db.WithContext(ctx).Create(&cart).Error; err != nil {
 		return entity.Cart{}, err
 	}
@@ -45,6 +47,7 @@ func (r *cartRepository) AddItemToCart(ctx context.Context, cartID string, item 
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
+	item.ID = uuid.NewString()
 	item.CartID = cartID
 	return r.db.WithContext(ctx).Create(&item).Error
 }

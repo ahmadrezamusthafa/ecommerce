@@ -31,14 +31,21 @@ func InitRouter(cfg *config.Configuration,
 
 	userHandler := handlers.NewUserHandler(serviceContainer)
 	productHandler := handlers.NewProductHandler(serviceContainer)
+	cartHandler := handlers.NewCartHandler(serviceContainer)
 
 	apiV1 := router.Group("/api/v1")
+
 	apiV1.POST("/user/register", userHandler.Register)
 	apiV1.POST("/user/login", userHandler.Login)
 	apiV1.PUT("/user/update", middlewares.AuthMiddleware(sessionCfg), userHandler.Update)
+
 	apiV1.GET("/products", productHandler.GetAllProducts)
 	apiV1.GET("/products/:id", productHandler.GetProductByID)
 	apiV1.GET("/products/search", productHandler.SearchProducts)
+
+	apiV1.GET("/cart", middlewares.AuthMiddleware(sessionCfg), cartHandler.GetCart)
+	apiV1.POST("/cart/items", middlewares.AuthMiddleware(sessionCfg), cartHandler.AddItemToCart)
+	apiV1.DELETE("/cart/items/:id", middlewares.AuthMiddleware(sessionCfg), cartHandler.RemoveItemFromCart)
 
 	return &Router{
 		Engine:           router,

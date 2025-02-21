@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"errors"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/apiresponse"
@@ -33,7 +32,7 @@ func (h *ProductHandler) GetAllProducts(c *gin.Context) {
 		}
 	}()
 
-	products, err := h.serviceContainer.ProductService.GetAllProducts(context.Background())
+	products, err := h.serviceContainer.ProductService.GetAllProducts(c)
 	if err != nil {
 		return
 	}
@@ -52,13 +51,13 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 		}
 	}()
 
-	id := c.Param("id")
-	if id == "" {
+	productID := c.Param("id")
+	if productID == "" {
 		err = errors.New("product id is required")
 		return
 	}
 
-	product, err := h.serviceContainer.ProductService.GetProductByID(context.Background(), id)
+	product, err := h.serviceContainer.ProductService.GetProductByID(c, productID)
 	if err != nil {
 		return
 	}
@@ -78,7 +77,7 @@ func (h *ProductHandler) SearchProducts(c *gin.Context) {
 	}()
 
 	query := c.Query("query")
-	product, err := h.serviceContainer.ProductService.SearchProducts(context.Background(), query)
+	product, err := h.serviceContainer.ProductService.SearchProducts(c, query)
 	if err != nil {
 		return
 	}
