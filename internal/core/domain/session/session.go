@@ -1,7 +1,9 @@
 package session
 
 import (
+	"github.com/ahmadrezamusthafa/ecommerce/internal/shared/constants"
 	"github.com/golang-jwt/jwt/v5"
+	"os"
 	"strings"
 	"time"
 )
@@ -22,6 +24,17 @@ func NewSession(secretKey string, expiration time.Duration) *Config {
 		secretKey:  secretKey,
 		expiration: expiration,
 	}
+}
+
+func GetSessionConfig() *Config {
+	secretKey := os.Getenv("JWT_SECRET")
+	expiration := os.Getenv("JWT_EXPIRATION")
+	duration, err := time.ParseDuration(expiration)
+	if err != nil {
+		duration = constants.DefaultSessionExpiration
+	}
+
+	return NewSession(secretKey, duration)
 }
 
 func (s *Config) GenerateToken(userID string) (session Session, err error) {

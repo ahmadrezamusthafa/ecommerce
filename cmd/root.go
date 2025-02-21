@@ -6,6 +6,7 @@ import (
 	"github.com/ahmadrezamusthafa/ecommerce/config"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/repositories"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/adapters/rest"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/session"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/cache"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/database"
@@ -34,6 +35,7 @@ func init() {
 
 func start() {
 	cfg := config.GetConfig()
+	sessionCfg := session.GetSessionConfig()
 	db, err := database.NewPostgresqlDatabase(cfg.Database)
 	if err != nil {
 		logger.Fatalf("Failed connect to database | %v", err)
@@ -52,10 +54,10 @@ func start() {
 	}
 
 	userRepository := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepository)
+	userService := services.NewUserService(sessionCfg, userRepository)
 
 	serviceContainer := services.NewServiceContainer(userService)
 
-	httpRouter := rest.InitRouter(cfg, serviceContainer)
+	httpRouter := rest.InitRouter(cfg, sessionCfg, serviceContainer)
 	httpRouter.Run()
 }

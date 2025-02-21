@@ -46,3 +46,21 @@ func (r *userRepository) Update(ctx context.Context, user entity.User) (entity.U
 	}
 	return user, nil
 }
+
+func (r *userRepository) GetByUsername(ctx context.Context, username string) (entity.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
+	defer cancel()
+
+	var user entity.User
+	err := r.db.Where("username = ?", username).First(&user).Error
+	return user, err
+}
+
+func (r *userRepository) GetByEmail(ctx context.Context, email string) (entity.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
+	defer cancel()
+
+	var user entity.User
+	err := r.db.Where("email = ?", email).First(&user).Error
+	return user, err
+}

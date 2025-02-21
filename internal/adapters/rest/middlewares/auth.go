@@ -26,7 +26,7 @@ func AuthMiddleware(jwtUtil *session.Config) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userID", res.UserID)
+		c.Set("user_id", res.UserID)
 		c.Next()
 	}
 }
