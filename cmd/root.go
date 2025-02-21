@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/config"
+	"github.com/ahmadrezamusthafa/ecommerce/pkg/cache"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/database"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
 	"github.com/spf13/cobra"
@@ -35,6 +37,17 @@ func start() {
 		logger.Fatalf("Failed connect to database | %v", err)
 	}
 	logger.Info("Connected to database successfully")
+
+	redisCache := cache.NewRedis(cfg.Cache)
+	defer func() {
+		_ = redisCache.Close()
+	}()
+	_, err = redisCache.Ping(context.Background()).Result()
+	if err != nil {
+		logger.Errorf("Failed connect to cache | %v", err)
+	} else {
+		logger.Info("Connected to cache successfully")
+	}
 
 	b, _ := json.Marshal(db)
 	fmt.Println(string(b))
