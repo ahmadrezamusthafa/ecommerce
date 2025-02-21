@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/config"
+	"github.com/ahmadrezamusthafa/ecommerce/pkg/database"
+	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -28,7 +30,12 @@ func init() {
 
 func start() {
 	cfg := config.GetConfig()
+	db, err := database.NewPostgresqlDatabase(cfg.Database)
+	if err != nil {
+		logger.Fatalf("Failed connect to database | %v", err)
+	}
+	logger.Info("Connected to database successfully")
 
-	b, _ := json.Marshal(cfg)
+	b, _ := json.Marshal(db)
 	fmt.Println(string(b))
 }
