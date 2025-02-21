@@ -54,9 +54,12 @@ func start() {
 	}
 
 	userRepository := repositories.NewUserRepository(db)
-	userService := services.NewUserService(sessionCfg, userRepository)
+	productRepository := repositories.NewProductRepository(db)
 
-	serviceContainer := services.NewServiceContainer(userService)
+	userService := services.NewUserService(sessionCfg, userRepository)
+	productService := services.NewProductService(sessionCfg, productRepository)
+
+	serviceContainer := services.NewServiceContainer(userService, productService)
 
 	httpRouter := rest.InitRouter(cfg, sessionCfg, serviceContainer)
 	httpRouter.Run()

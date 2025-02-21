@@ -28,12 +28,17 @@ func InitRouter(cfg *config.Configuration,
 	sessionCfg *session.Config,
 	serviceContainer *services.ServiceContainer) *Router {
 	router := gin.Default()
+
 	userHandler := handlers.NewUserHandler(serviceContainer)
+	productHandler := handlers.NewProductHandler(serviceContainer)
 
 	apiV1 := router.Group("/api/v1")
 	apiV1.POST("/user/register", userHandler.Register)
 	apiV1.POST("/user/login", userHandler.Login)
 	apiV1.PUT("/user/update", middlewares.AuthMiddleware(sessionCfg), userHandler.Update)
+	apiV1.GET("/products", productHandler.GetAllProducts)
+	apiV1.GET("/products/:id", productHandler.GetProductByID)
+	apiV1.GET("/products/search", productHandler.SearchProducts)
 
 	return &Router{
 		Engine:           router,
