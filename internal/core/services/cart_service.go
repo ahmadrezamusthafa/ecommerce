@@ -21,7 +21,7 @@ func NewCartService(sessionCfg *session.Config, productRepository ports.ICartRep
 	}
 }
 
-func (s *cartService) GetCart(ctx context.Context, userID string) (entity.Cart, error) {
+func (s *cartService) GetCart(ctx context.Context, userID int) (entity.Cart, error) {
 	cart, err := s.cartRepository.GetCartByUserID(ctx, userID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return entity.Cart{}, nil
@@ -29,7 +29,7 @@ func (s *cartService) GetCart(ctx context.Context, userID string) (entity.Cart, 
 	return cart, err
 }
 
-func (s *cartService) AddItemToCart(ctx context.Context, userID string, item entity.CartItem) error {
+func (s *cartService) AddItemToCart(ctx context.Context, userID int, item entity.CartItem) error {
 	cart, err := s.cartRepository.GetCartByUserID(ctx, userID)
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		cart, err = s.cartRepository.CreateCart(ctx, entity.Cart{UserID: userID})
@@ -40,7 +40,7 @@ func (s *cartService) AddItemToCart(ctx context.Context, userID string, item ent
 	return s.cartRepository.AddItemToCart(ctx, cart.ID, item)
 }
 
-func (s *cartService) RemoveItemFromCart(ctx context.Context, userID string, productID string) error {
+func (s *cartService) RemoveItemFromCart(ctx context.Context, userID int, productID int) error {
 	cart, err := s.cartRepository.GetCartByUserID(ctx, userID)
 	if err != nil {
 		return err

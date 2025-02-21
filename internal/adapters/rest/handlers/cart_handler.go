@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"runtime/debug"
+	"strconv"
 )
 
 type CartHandler struct {
@@ -34,9 +35,9 @@ func (h *CartHandler) GetCart(c *gin.Context) {
 		}
 	}()
 
-	var userID string
+	var userID int
 	if v, ok := c.Get("user_id"); ok {
-		if v, ok := v.(string); ok {
+		if v, ok := v.(int); ok {
 			userID = v
 		}
 	}
@@ -70,9 +71,9 @@ func (h *CartHandler) AddItemToCart(c *gin.Context) {
 		return
 	}
 
-	var userID string
+	var userID int
 	if v, ok := c.Get("user_id"); ok {
-		if v, ok := v.(string); ok {
+		if v, ok := v.(int); ok {
 			userID = v
 		}
 	}
@@ -105,16 +106,21 @@ func (h *CartHandler) RemoveItemFromCart(c *gin.Context) {
 		}
 	}()
 
-	var userID string
+	var userID int
 	if v, ok := c.Get("user_id"); ok {
-		if v, ok := v.(string); ok {
+		if v, ok := v.(int); ok {
 			userID = v
 		}
 	}
 
-	productID := c.Param("id")
-	if productID == "" {
+	productIDStr := c.Param("id")
+	if productIDStr == "" {
 		err = errors.New("product id is required")
+		return
+	}
+
+	productID, err := strconv.Atoi(productIDStr)
+	if err != nil {
 		return
 	}
 

@@ -6,7 +6,6 @@ import (
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/shared/constants"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,14 +23,13 @@ func (r *cartRepository) CreateCart(ctx context.Context, cart entity.Cart) (enti
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
-	cart.ID = uuid.NewString()
 	if err := r.db.WithContext(ctx).Create(&cart).Error; err != nil {
 		return entity.Cart{}, err
 	}
 	return cart, nil
 }
 
-func (r *cartRepository) GetCartByUserID(ctx context.Context, userID string) (entity.Cart, error) {
+func (r *cartRepository) GetCartByUserID(ctx context.Context, userID int) (entity.Cart, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
 	defer cancel()
 
@@ -43,16 +41,15 @@ func (r *cartRepository) GetCartByUserID(ctx context.Context, userID string) (en
 	return cart, nil
 }
 
-func (r *cartRepository) AddItemToCart(ctx context.Context, cartID string, item entity.CartItem) error {
+func (r *cartRepository) AddItemToCart(ctx context.Context, cartID int, item entity.CartItem) error {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
-	item.ID = uuid.NewString()
 	item.CartID = cartID
 	return r.db.WithContext(ctx).Create(&item).Error
 }
 
-func (r *cartRepository) RemoveItemFromCart(ctx context.Context, cartID string, productID string) error {
+func (r *cartRepository) RemoveItemFromCart(ctx context.Context, cartID int, productID int) error {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 

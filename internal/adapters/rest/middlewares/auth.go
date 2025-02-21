@@ -26,6 +26,12 @@ func AuthMiddleware(jwtUtil *session.Config) gin.HandlerFunc {
 			return
 		}
 
+		if res.UserID == 0 {
+			apiresponse.Error(c, http.StatusUnauthorized, "Could not get user information", apperror.New("unauthorized"))
+			c.Abort()
+			return
+		}
+
 		c.Set("user_id", res.UserID)
 		c.Next()
 	}

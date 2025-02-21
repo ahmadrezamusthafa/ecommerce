@@ -3,7 +3,7 @@
 -- [your SQL script here]
 CREATE TABLE products
 (
-    id          VARCHAR(36) PRIMARY KEY,
+    id          SERIAL PRIMARY KEY,
     name        VARCHAR(100)   NOT NULL,
     description TEXT,
     price       DECIMAL(10, 2) NOT NULL,

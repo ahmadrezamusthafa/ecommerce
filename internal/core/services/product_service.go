@@ -23,7 +23,7 @@ func (s *productService) GetAllProducts(ctx context.Context) ([]entity.Product, 
 	return s.productRepository.GetAll(ctx)
 }
 
-func (s *productService) GetProductByID(ctx context.Context, productID string) (entity.Product, error) {
+func (s *productService) GetProductByID(ctx context.Context, productID int) (entity.Product, error) {
 	return s.productRepository.GetByID(ctx, productID)
 }
 

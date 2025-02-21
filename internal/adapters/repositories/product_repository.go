@@ -27,7 +27,7 @@ func (r *productRepository) GetAll(ctx context.Context) ([]entity.Product, error
 	return products, err
 }
 
-func (r *productRepository) GetByID(ctx context.Context, productID string) (entity.Product, error) {
+func (r *productRepository) GetByID(ctx context.Context, productID int) (entity.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
 	defer cancel()
 

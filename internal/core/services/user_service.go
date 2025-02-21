@@ -81,10 +81,10 @@ func (s *userService) Login(ctx context.Context, email, username, password strin
 }
 
 func (s *userService) validateUniqueUser(ctx context.Context, user entity.User) error {
-	if _, err := s.userRepository.GetByEmail(ctx, user.Email); err == nil && user.ID == "" {
+	if _, err := s.userRepository.GetByEmail(ctx, user.Email); err == nil && user.ID == 0 {
 		return errors.New("email already in use")
 	}
-	if _, err := s.userRepository.GetByUsername(ctx, user.Username); err == nil && user.ID == "" {
+	if _, err := s.userRepository.GetByUsername(ctx, user.Username); err == nil && user.ID == 0 {
 		return errors.New("username already in use")
 	}
 	return nil

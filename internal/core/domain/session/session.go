@@ -10,7 +10,7 @@ import (
 
 type Session struct {
 	Token     string    `json:"token"`
-	UserID    string    `json:"user_id"`
+	UserID    int       `json:"user_id"`
 	ExpiredAt time.Time `json:"expired_at"`
 }
 
@@ -37,7 +37,7 @@ func GetSessionConfig() *Config {
 	return NewSession(secretKey, duration)
 }
 
-func (s *Config) GenerateToken(userID string) (session Session, err error) {
+func (s *Config) GenerateToken(userID int) (session Session, err error) {
 	expiredAt := time.Now().Add(s.expiration)
 	claims := jwt.MapClaims{
 		"user_id": userID,
@@ -79,12 +79,12 @@ func (s *Config) ParseToken(tokenStr string) (*Session, error) {
 
 func castToSessionToken(claim map[string]interface{}) (session *Session) {
 	var (
-		userID     string
+		userID     int
 		expiration time.Time
 	)
 
-	if val, ok := claim["user_id"].(string); ok {
-		userID = val
+	if val, ok := claim["user_id"].(float64); ok {
+		userID = int(val)
 	}
 	if val, ok := claim["exp"].(float64); ok {
 		expiration = time.Unix(int64(val), 0)

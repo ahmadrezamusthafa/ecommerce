@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"runtime/debug"
+	"strconv"
 )
 
 type ProductHandler struct {
@@ -51,9 +52,14 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 		}
 	}()
 
-	productID := c.Param("id")
-	if productID == "" {
+	productIDStr := c.Param("id")
+	if productIDStr == "" {
 		err = errors.New("product id is required")
+		return
+	}
+
+	productID, err := strconv.Atoi(productIDStr)
+	if err != nil {
 		return
 	}
 

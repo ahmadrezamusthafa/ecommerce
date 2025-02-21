@@ -6,7 +6,7 @@ import (
 )
 
 type ICartService interface {
-	GetCart(ctx context.Context, userID string) (entity.Cart, error)
-	AddItemToCart(ctx context.Context, userID string, item entity.CartItem) error
-	RemoveItemFromCart(ctx context.Context, userID string, productID string) error
+	GetCart(ctx context.Context, userID int) (entity.Cart, error)
+	AddItemToCart(ctx context.Context, userID int, item entity.CartItem) error
+	RemoveItemFromCart(ctx context.Context, userID int, productID int) error
 }

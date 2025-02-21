@@ -79,9 +79,9 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	var userID string
+	var userID int
 	if v, ok := c.Get("user_id"); ok {
-		if v, ok := v.(string); ok {
+		if v, ok := v.(int); ok {
 			userID = v
 		}
 	}

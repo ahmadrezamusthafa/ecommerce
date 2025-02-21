@@ -3,7 +3,7 @@
 -- [your SQL script here]
 CREATE TABLE users
 (
-    id         VARCHAR(36) PRIMARY KEY,
+    id         SERIAL PRIMARY KEY,
     username   VARCHAR(50) UNIQUE  NOT NULL,
     name       VARCHAR(100)        NOT NULL,
     email      VARCHAR(100) UNIQUE NOT NULL,
