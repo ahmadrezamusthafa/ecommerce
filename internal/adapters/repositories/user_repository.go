@@ -52,7 +52,7 @@ func (r *userRepository) GetByUsername(ctx context.Context, username string) (en
 	defer cancel()
 
 	var user entity.User
-	err := r.db.Where("username = ?", username).First(&user).Error
+	err := r.db.WithContext(ctx).Where("username = ?", username).First(&user).Error
 	return user, err
 }
 
@@ -61,6 +61,6 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (entity.U
 	defer cancel()
 
 	var user entity.User
-	err := r.db.Where("email = ?", email).First(&user).Error
+	err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
 	return user, err
 }
