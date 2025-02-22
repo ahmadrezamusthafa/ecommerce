@@ -20,7 +20,7 @@ func NewUserRepository(db *gorm.DB) ports.IUserRepository {
 	}
 }
 
-func (r *userRepository) Create(ctx context.Context, user entity.User) (entity.User, error) {
+func (r *userRepository) CreateUser(ctx context.Context, user entity.User) (entity.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
@@ -31,7 +31,7 @@ func (r *userRepository) Create(ctx context.Context, user entity.User) (entity.U
 	return user, nil
 }
 
-func (r *userRepository) Update(ctx context.Context, user entity.User) (entity.User, error) {
+func (r *userRepository) UpdateUser(ctx context.Context, user entity.User) (entity.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 

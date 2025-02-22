@@ -32,6 +32,7 @@ func InitRouter(cfg *config.Configuration,
 	userHandler := handlers.NewUserHandler(serviceContainer)
 	productHandler := handlers.NewProductHandler(serviceContainer)
 	cartHandler := handlers.NewCartHandler(serviceContainer)
+	orderHandler := handlers.NewOrderHandler(serviceContainer)
 
 	apiV1 := router.Group("/api/v1")
 
@@ -46,6 +47,9 @@ func InitRouter(cfg *config.Configuration,
 	apiV1.GET("/cart", middlewares.AuthMiddleware(sessionCfg), cartHandler.GetCart)
 	apiV1.POST("/cart/items", middlewares.AuthMiddleware(sessionCfg), cartHandler.AddItemToCart)
 	apiV1.DELETE("/cart/items/:id", middlewares.AuthMiddleware(sessionCfg), cartHandler.RemoveItemFromCart)
+
+	apiV1.POST("/orders", middlewares.AuthMiddleware(sessionCfg), orderHandler.CreateOrder)
+	apiV1.GET("/orders/top-customers", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetTopCustomers)
 
 	return &Router{
 		Engine:           router,

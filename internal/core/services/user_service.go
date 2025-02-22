@@ -32,7 +32,7 @@ func (s *userService) Register(ctx context.Context, user entity.User) (entity.Us
 	}
 	user.Password = hashedPassword
 
-	return s.userRepository.Create(ctx, user)
+	return s.userRepository.CreateUser(ctx, user)
 }
 
 func (s *userService) Update(ctx context.Context, user entity.User) (entity.User, error) {
@@ -46,7 +46,7 @@ func (s *userService) Update(ctx context.Context, user entity.User) (entity.User
 	}
 	user.Password = hashedPassword
 
-	return s.userRepository.Update(ctx, user)
+	return s.userRepository.UpdateUser(ctx, user)
 }
 
 func (s *userService) Login(ctx context.Context, email, username, password string) (session.Session, error) {

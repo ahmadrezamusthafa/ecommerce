@@ -6,7 +6,6 @@ import (
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/shared/constants"
 	"gorm.io/gorm"
-	"time"
 )
 
 type orderRepository struct {
@@ -18,26 +17,26 @@ func NewOrderRepository(db *gorm.DB) ports.IOrderRepository {
 		db: db,
 	}
 }
-func (r *orderRepository) CreateOrder(ctx context.Context, order entity.Order) (entity.Order, error) {
+func (r *orderRepository) CreateOrder(ctx context.Context, orders []entity.Order) ([]entity.Order, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
 	defer cancel()
 
-	order.OrderDate = time.Now()
-	if err := r.db.WithContext(ctx).Create(&order).Error; err != nil {
-		return entity.Order{}, err
+	if err := r.db.WithContext(ctx).Create(&orders).Error; err != nil {
+		return []entity.Order{}, err
 	}
-	return order, nil
+	return orders, nil
 }
 
-func (r *orderRepository) GetTopCustomers(ctx context.Context, limit int) ([]entity.Order, error) {
+func (r *orderRepository) GetTopCustomers(ctx context.Context, limit int) ([]entity.CustomerTransaction, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
 	defer cancel()
 
-	var orders []entity.Order
-	err := r.db.WithContext(ctx).
-		Select("customer_id, SUM(amount) AS total_amount").
+	var orders []entity.CustomerTransaction
+	err := r.db.WithContext(ctx).Table("orders").
+		Select("orders.customer_id, SUM(orders.amount) AS total_amount, users.name AS customer_name, users.email AS customer_email").
+		Joins("LEFT JOIN users ON orders.customer_id = users.id").
 		Where("order_date >= NOW() - INTERVAL '1 MONTH'").
-		Group("customer_id").
+		Group("customer_id, customer_name, customer_email").
 		Order("total_amount DESC").
 		Limit(limit).
 		Find(&orders).Error
