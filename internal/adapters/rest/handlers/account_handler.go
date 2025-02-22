@@ -21,6 +21,32 @@ func NewAccountHandler(serviceContainer *services.ServiceContainer) *AccountHand
 	}
 }
 
+func (h *AccountHandler) GetAccountBalanceInfo(c *gin.Context) {
+	var err error
+	defer func() {
+		if r := recover(); r != nil {
+			logger.Error(string(debug.Stack()))
+			apiresponse.Error(c, http.StatusInternalServerError, "Unhandled exception", apperror.New("got panic exception"))
+		} else if err != nil {
+			apiresponse.Error(c, http.StatusInternalServerError, "Exception", apperror.New(err.Error()))
+		}
+	}()
+
+	var userID int
+	if v, ok := c.Get("user_id"); ok {
+		if v, ok := v.(int); ok {
+			userID = v
+		}
+	}
+
+	account, err := h.serviceContainer.AccountService.GetAccountByUserID(c, userID)
+	if err != nil {
+		return
+	}
+
+	apiresponse.Success(c, account, "")
+}
+
 func (h *AccountHandler) Withdraw(c *gin.Context) {
 	var (
 		err     error

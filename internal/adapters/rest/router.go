@@ -53,8 +53,9 @@ func InitRouter(cfg *config.Configuration,
 	apiV1.GET("/orders", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetOrder)
 	apiV1.GET("/orders/top-customers", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetTopCustomers)
 
-	apiV1.POST("/accounts/deposit", middlewares.AuthMiddleware(sessionCfg), accountHandler.Deposit)
-	apiV1.POST("/accounts/withdraw", middlewares.AuthMiddleware(sessionCfg), accountHandler.Withdraw)
+	apiV1.GET("/account", middlewares.AuthMiddleware(sessionCfg), accountHandler.GetAccountBalanceInfo)
+	apiV1.POST("/account/deposit", middlewares.AuthMiddleware(sessionCfg), accountHandler.Deposit)
+	apiV1.POST("/account/withdraw", middlewares.AuthMiddleware(sessionCfg), accountHandler.Withdraw)
 
 	return &Router{
 		Engine:           router,
