@@ -72,7 +72,6 @@ func (s *accountService) Withdraw(ctx context.Context, userID int, amount float6
 		if err != nil {
 			return err
 		}
-
 		err = s.accountRepository.DecreaseAccountBalance(ctx, nil, userID, amount)
 		if err != nil {
 			return err
@@ -99,17 +98,9 @@ func (s *accountService) Deposit(ctx context.Context, userID int, amount float64
 			if err != nil {
 				return err
 			}
-			available, err := s.cacheRepository.SetUserBalance(tx, userID, account.Balance)
+			_, err = s.cacheRepository.SetUserBalance(tx, userID, account.Balance)
 			if err != nil {
 				return err
-			}
-			if available {
-				balance = account.Balance
-			} else {
-				balance, err = s.cacheRepository.GetUserBalance(tx, userID)
-				if err != nil {
-					return err
-				}
 			}
 		}
 
@@ -117,7 +108,6 @@ func (s *accountService) Deposit(ctx context.Context, userID int, amount float64
 		if err != nil {
 			return err
 		}
-
 		err = s.accountRepository.IncreaseAccountBalance(ctx, nil, userID, amount)
 		if err != nil {
 			return err
