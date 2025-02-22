@@ -30,7 +30,7 @@ func (r *accountRepository) GetAccountByUserID(ctx context.Context, userID int) 
 	return account, nil
 }
 
-func (r *accountRepository) UpdateAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error {
+func (r *accountRepository) IncreaseAccountBalance(ctx context.Context, tx *gorm.DB, userID int, amount float64) error {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
@@ -38,11 +38,24 @@ func (r *accountRepository) UpdateAccountBalance(ctx context.Context, tx *gorm.D
 		tx = r.db
 	}
 
-	var account entity.Account
-	err := tx.WithContext(ctx).FirstOrCreate(&account, entity.Account{UserID: userID}).Error
-	if err != nil {
-		return err
+	return tx.WithContext(ctx).
+		Model(&entity.Account{}).
+		Where("user_id = ?", userID).
+		Update("balance", gorm.Expr("balance + ?", amount)).
+		Error
+}
+
+func (r *accountRepository) DecreaseAccountBalance(ctx context.Context, tx *gorm.DB, userID int, amount float64) error {
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
+	defer cancel()
+
+	if tx == nil {
+		tx = r.db
 	}
-	account.Balance = balance
-	return tx.WithContext(ctx).Save(&account).Error
+
+	return tx.WithContext(ctx).
+		Model(&entity.Account{}).
+		Where("user_id = ?", userID).
+		Update("balance", gorm.Expr("balance - ?", amount)).
+		Error
 }

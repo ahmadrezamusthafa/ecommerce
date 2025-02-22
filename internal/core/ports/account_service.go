@@ -8,7 +8,8 @@ import (
 
 type IAccountService interface {
 	GetAccountByUserID(ctx context.Context, userID int) (entity.Account, error)
-	UpdateAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error
+	IncreaseAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error
+	DecreaseAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error
 	Withdraw(ctx context.Context, userID int, amount float64) error
 	Deposit(ctx context.Context, userID int, amount float64) error
 }

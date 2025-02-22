@@ -32,16 +32,16 @@ func (r *cacheRepository) GetUserBalance(tx *redis.Tx, userID int) (float64, err
 	return strconv.ParseFloat(val, 64)
 }
 
-func (r *cacheRepository) IncreaseUserBalance(tx *redis.Tx, userID int, amount float64) error {
+func (r *cacheRepository) IncreaseUserBalance(tx *redis.Tx, userID int, amount float64) (float64, error) {
 	key := getUserBalanceKey(userID)
-	_, err := r.client.IncrByFloat(context.Background(), key, amount).Result()
-	return err
+	result, err := r.client.IncrByFloat(context.Background(), key, amount).Result()
+	return result, err
 }
 
-func (r *cacheRepository) DecreaseUserBalance(tx *redis.Tx, userID int, amount float64) error {
+func (r *cacheRepository) DecreaseUserBalance(tx *redis.Tx, userID int, amount float64) (float64, error) {
 	key := getUserBalanceKey(userID)
-	_, err := r.client.IncrByFloat(context.Background(), key, -amount).Result()
-	return err
+	result, err := r.client.IncrByFloat(context.Background(), key, -amount).Result()
+	return result, err
 }
 
 func (r *cacheRepository) SetUserBalance(tx *redis.Tx, userID int, balance float64) (bool, error) {

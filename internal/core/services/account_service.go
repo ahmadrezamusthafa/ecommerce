@@ -30,8 +30,12 @@ func (s *accountService) GetAccountByUserID(ctx context.Context, userID int) (en
 	return s.accountRepository.GetAccountByUserID(ctx, userID)
 }
 
-func (s *accountService) UpdateAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error {
-	return s.accountRepository.UpdateAccountBalance(ctx, tx, userID, balance)
+func (s *accountService) IncreaseAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error {
+	return s.accountRepository.IncreaseAccountBalance(ctx, tx, userID, balance)
+}
+
+func (s *accountService) DecreaseAccountBalance(ctx context.Context, tx *gorm.DB, userID int, balance float64) error {
+	return s.accountRepository.DecreaseAccountBalance(ctx, tx, userID, balance)
 }
 
 func (s *accountService) Withdraw(ctx context.Context, userID int, amount float64) error {
@@ -64,11 +68,12 @@ func (s *accountService) Withdraw(ctx context.Context, userID int, amount float6
 		if newBalance < 0 {
 			return fmt.Errorf("insufficient balance: %.f", newBalance)
 		}
-		err = s.cacheRepository.DecreaseUserBalance(tx, userID, amount)
+		_, err = s.cacheRepository.DecreaseUserBalance(tx, userID, amount)
 		if err != nil {
 			return err
 		}
-		err = s.accountRepository.UpdateAccountBalance(ctx, nil, userID, newBalance)
+
+		err = s.accountRepository.DecreaseAccountBalance(ctx, nil, userID, amount)
 		if err != nil {
 			return err
 		}
@@ -108,12 +113,12 @@ func (s *accountService) Deposit(ctx context.Context, userID int, amount float64
 			}
 		}
 
-		newBalance := balance + amount
-		err = s.cacheRepository.IncreaseUserBalance(tx, userID, amount)
+		_, err = s.cacheRepository.IncreaseUserBalance(tx, userID, amount)
 		if err != nil {
 			return err
 		}
-		err = s.accountRepository.UpdateAccountBalance(ctx, nil, userID, newBalance)
+
+		err = s.accountRepository.IncreaseAccountBalance(ctx, nil, userID, amount)
 		if err != nil {
 			return err
 		}

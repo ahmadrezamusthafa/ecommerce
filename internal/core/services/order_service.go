@@ -96,11 +96,11 @@ func (s *orderService) CreateOrder(ctx context.Context, userID int) ([]entity.Or
 		if newBalance < 0 {
 			return fmt.Errorf("insufficient balance: %.f", newBalance)
 		}
-		err = s.cacheRepository.DecreaseUserBalance(tx, userID, totalAmount)
+		_, err = s.cacheRepository.DecreaseUserBalance(tx, userID, totalAmount)
 		if err != nil {
 			return err
 		}
-		err = s.accountService.UpdateAccountBalance(ctx, dbTx, userID, newBalance)
+		err = s.accountService.DecreaseAccountBalance(ctx, dbTx, userID, totalAmount)
 		if err != nil {
 			return err
 		}
