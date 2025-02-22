@@ -8,4 +8,7 @@ const (
 
 	DefaultSessionExpiration = 24 * time.Hour
 	DefaultTTLUserBalance    = 30 * time.Minute
+
+	DefaultPageNum  = 1
+	DefaultPageSize = 10
 )

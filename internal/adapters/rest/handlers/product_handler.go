@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/pagination"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/services"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/apiresponse"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/apperror"
@@ -38,7 +39,28 @@ func (h *ProductHandler) GetAllProducts(c *gin.Context) {
 		return
 	}
 
-	apiresponse.Success(c, products, "")
+	var page, pageSize int
+	q := c.Query("page")
+	if q != "" {
+		number, convErr := strconv.Atoi(q)
+		if convErr != nil {
+			err = convErr
+			return
+		}
+		page = number
+	}
+	q = c.Query("page_size")
+	if q != "" {
+		number, convErr := strconv.Atoi(q)
+		if convErr != nil {
+			err = convErr
+			return
+		}
+		pageSize = number
+	}
+	paginatedProducts := pagination.Paginate(products, page, pageSize)
+
+	apiresponse.Success(c, paginatedProducts, "")
 }
 
 func (h *ProductHandler) GetProductByID(c *gin.Context) {
@@ -83,10 +105,31 @@ func (h *ProductHandler) SearchProducts(c *gin.Context) {
 	}()
 
 	query := c.Query("query")
-	product, err := h.serviceContainer.ProductService.SearchProducts(c, query)
+	products, err := h.serviceContainer.ProductService.SearchProducts(c, query)
 	if err != nil {
 		return
 	}
 
-	apiresponse.Success(c, product, "")
+	var page, pageSize int
+	q := c.Query("page")
+	if q != "" {
+		number, convErr := strconv.Atoi(q)
+		if convErr != nil {
+			err = convErr
+			return
+		}
+		page = number
+	}
+	q = c.Query("page_size")
+	if q != "" {
+		number, convErr := strconv.Atoi(q)
+		if convErr != nil {
+			err = convErr
+			return
+		}
+		pageSize = number
+	}
+	paginatedProducts := pagination.Paginate(products, page, pageSize)
+
+	apiresponse.Success(c, paginatedProducts, "")
 }
