@@ -65,8 +65,8 @@ func start() {
 	userService := services.NewUserService(sessionCfg, userRepository)
 	productService := services.NewProductService(sessionCfg, productRepository)
 	cartService := services.NewCartService(sessionCfg, cartRepository)
-	orderService := services.NewOrderService(sessionCfg, infraContainer, orderRepository, cacheRepository, cartService)
 	accountService := services.NewAccountService(sessionCfg, accountRepository, cacheRepository)
+	orderService := services.NewOrderService(sessionCfg, infraContainer, orderRepository, cacheRepository, cartService, accountService)
 
 	serviceContainer := services.NewServiceContainer(userService, productService, cartService, orderService, accountService)
 

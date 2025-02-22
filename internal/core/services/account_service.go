@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/session"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
@@ -62,7 +62,7 @@ func (s *accountService) Withdraw(ctx context.Context, userID int, amount float6
 
 		newBalance := balance - amount
 		if newBalance < 0 {
-			return errors.New("insufficient balance")
+			return fmt.Errorf("insufficient balance: %.f", newBalance)
 		}
 		err = s.cacheRepository.DecreaseUserBalance(tx, userID, amount)
 		if err != nil {

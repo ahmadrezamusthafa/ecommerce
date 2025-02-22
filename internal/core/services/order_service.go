@@ -7,6 +7,7 @@ import (
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/session"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/ports"
 	"github.com/ahmadrezamusthafa/ecommerce/pkg/logger"
+	"github.com/go-redis/redis/v8"
 	"time"
 )
 
@@ -14,6 +15,7 @@ type orderService struct {
 	orderRepository ports.IOrderRepository
 	cacheRepository ports.ICacheRepository
 	cartService     ports.ICartService
+	accountService  ports.IAccountService
 	sessionCfg      *session.Config
 	infraContainer  *InfraContainer
 }
@@ -22,29 +24,31 @@ func NewOrderService(sessionCfg *session.Config,
 	infraContainer *InfraContainer,
 	orderRepository ports.IOrderRepository,
 	cacheRepository ports.ICacheRepository,
-	cartService ports.ICartService) ports.IOrderService {
+	cartService ports.ICartService,
+	accountService ports.IAccountService) ports.IOrderService {
 	return &orderService{
 		sessionCfg:      sessionCfg,
 		infraContainer:  infraContainer,
 		orderRepository: orderRepository,
 		cacheRepository: cacheRepository,
 		cartService:     cartService,
+		accountService:  accountService,
 	}
 }
 
 func (s *orderService) CreateOrder(ctx context.Context, userID int) ([]entity.Order, error) {
 	var err error
-	tx := s.infraContainer.DB.Begin()
-	if tx.Error != nil {
-		return nil, fmt.Errorf("failed to start transaction: %w", tx.Error)
+	dbTx := s.infraContainer.DB.Begin()
+	if dbTx.Error != nil {
+		return nil, fmt.Errorf("failed to start transaction: %w", dbTx.Error)
 	}
 
 	defer func() {
 		if r := recover(); r != nil {
-			tx.Rollback()
+			dbTx.Rollback()
 			logger.Errorf("Panic exception: %v", r)
 		} else if err != nil {
-			tx.Rollback()
+			dbTx.Rollback()
 			logger.Errorf("Unhandled exception: %v", r)
 		}
 	}()
@@ -53,23 +57,69 @@ func (s *orderService) CreateOrder(ctx context.Context, userID int) ([]entity.Or
 	if err != nil {
 		return nil, err
 	}
-
 	orders, err := s.prepareOrdersFromCart(cart, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare orders: %w", err)
 	}
 
-	orders, err = s.orderRepository.CreateOrder(ctx, tx, orders)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create orders: %w", err)
+	totalAmount := 0.0
+	for _, order := range orders {
+		totalAmount += order.Amount
 	}
 
-	err = s.cartService.RemoveAllItemsFromCart(ctx, tx, userID)
+	err = s.cacheRepository.WatchUserBalance(userID, func(tx *redis.Tx) error {
+		balance, err := s.cacheRepository.GetUserBalance(tx, userID)
+		if err != nil {
+			return err
+		}
+
+		if balance <= 0 {
+			account, err := s.accountService.GetAccountByUserID(ctx, userID)
+			if err != nil {
+				return err
+			}
+			available, err := s.cacheRepository.SetUserBalance(tx, userID, account.Balance)
+			if err != nil {
+				return err
+			}
+			if available {
+				balance = account.Balance
+			} else {
+				balance, err = s.cacheRepository.GetUserBalance(tx, userID)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		newBalance := balance - totalAmount
+		if newBalance < 0 {
+			return fmt.Errorf("insufficient balance: %.f", newBalance)
+		}
+		err = s.cacheRepository.DecreaseUserBalance(tx, userID, totalAmount)
+		if err != nil {
+			return err
+		}
+		err = s.accountService.UpdateAccountBalance(ctx, dbTx, userID, newBalance)
+		if err != nil {
+			return err
+		}
+		orders, err = s.orderRepository.CreateOrder(ctx, dbTx, orders)
+		if err != nil {
+			return fmt.Errorf("failed to create orders: %w", err)
+		}
+		err = s.cartService.RemoveAllItemsFromCart(ctx, dbTx, userID)
+		if err != nil {
+			return fmt.Errorf("failed to remove cart items: %w", err)
+		}
+
+		return nil
+	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to remove cart items: %w", err)
+		return nil, err
 	}
 
-	err = tx.Commit().Error
+	err = dbTx.Commit().Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to commit transaction: %w", err)
 	}
