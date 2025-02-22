@@ -76,3 +76,24 @@ func (r *cartRepository) RemoveAllItemsFromCart(ctx context.Context, tx *gorm.DB
 	}
 	return nil
 }
+
+func (r *cartRepository) GetItemByProductID(ctx context.Context, cartID, productID int) (entity.CartItem, error) {
+	var item entity.CartItem
+	err := r.db.WithContext(ctx).
+		Where("cart_id = ? AND product_id = ?", cartID, productID).
+		First(&item).Error
+
+	return item, err
+}
+
+func (r *cartRepository) UpdateCartItem(ctx context.Context, item entity.CartItem) error {
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
+	defer cancel()
+
+	return r.db.WithContext(ctx).
+		Model(&entity.CartItem{}).
+		Where("id = ?", item.ID).
+		Updates(map[string]interface{}{
+			"quantity": item.Quantity,
+		}).Error
+}

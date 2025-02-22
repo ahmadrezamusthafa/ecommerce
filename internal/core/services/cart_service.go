@@ -37,6 +37,17 @@ func (s *cartService) AddItemToCart(ctx context.Context, userID int, item entity
 			return err
 		}
 	}
+
+	existingItem, err := s.cartRepository.GetItemByProductID(ctx, cart.ID, item.ProductID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	if existingItem.ID != 0 {
+		existingItem.Quantity += item.Quantity
+		return s.cartRepository.UpdateCartItem(ctx, existingItem)
+	}
+
 	return s.cartRepository.AddItemToCart(ctx, cart.ID, item)
 }
 
