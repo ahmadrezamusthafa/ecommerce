@@ -53,6 +53,8 @@ func start() {
 		logger.Info("Connected to cache successfully")
 	}
 
+	infraContainer := services.NewInfraContainer(db, redisCache)
+
 	userRepository := repositories.NewUserRepository(db)
 	productRepository := repositories.NewProductRepository(db)
 	cartRepository := repositories.NewCartRepository(db)
@@ -61,7 +63,7 @@ func start() {
 	userService := services.NewUserService(sessionCfg, userRepository)
 	productService := services.NewProductService(sessionCfg, productRepository)
 	cartService := services.NewCartService(sessionCfg, cartRepository)
-	orderService := services.NewOrderService(sessionCfg, orderRepository, cartService)
+	orderService := services.NewOrderService(sessionCfg, infraContainer, orderRepository, cartService)
 
 	serviceContainer := services.NewServiceContainer(userService, productService, cartService, orderService)
 

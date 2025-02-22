@@ -47,3 +47,11 @@ func (s *cartService) RemoveItemFromCart(ctx context.Context, userID int, produc
 	}
 	return s.cartRepository.RemoveItemFromCart(ctx, cart.ID, productID)
 }
+
+func (s *cartService) RemoveAllItemsFromCart(ctx context.Context, tx *gorm.DB, userID int) error {
+	cart, err := s.cartRepository.GetCartByUserID(ctx, userID)
+	if err != nil {
+		return err
+	}
+	return s.cartRepository.RemoveAllItemsFromCart(ctx, tx, cart.ID)
+}

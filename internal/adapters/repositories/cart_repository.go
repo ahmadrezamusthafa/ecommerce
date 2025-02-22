@@ -62,3 +62,17 @@ func (r *cartRepository) RemoveItemFromCart(ctx context.Context, cartID int, pro
 	}
 	return nil
 }
+
+func (r *cartRepository) RemoveAllItemsFromCart(ctx context.Context, tx *gorm.DB, cartID int) error {
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
+	defer cancel()
+
+	result := tx.WithContext(ctx).Where("cart_id = ?", cartID).Delete(&entity.CartItem{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("item not found in cart")
+	}
+	return nil
+}

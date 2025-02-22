@@ -3,6 +3,7 @@ package ports
 import (
 	"context"
 	"github.com/ahmadrezamusthafa/ecommerce/internal/core/domain/entity"
+	"gorm.io/gorm"
 )
 
 type ICartRepository interface {
@@ -10,4 +11,5 @@ type ICartRepository interface {
 	GetCartByUserID(ctx context.Context, userID int) (entity.Cart, error)
 	AddItemToCart(ctx context.Context, cartID int, item entity.CartItem) error
 	RemoveItemFromCart(ctx context.Context, cartID int, productID int) error
+	RemoveAllItemsFromCart(ctx context.Context, tx *gorm.DB, cartID int) error
 }

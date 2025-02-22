@@ -17,11 +17,12 @@ func NewOrderRepository(db *gorm.DB) ports.IOrderRepository {
 		db: db,
 	}
 }
-func (r *orderRepository) CreateOrder(ctx context.Context, orders []entity.Order) ([]entity.Order, error) {
+
+func (r *orderRepository) CreateOrder(ctx context.Context, tx *gorm.DB, orders []entity.Order) ([]entity.Order, error) {
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
 	defer cancel()
 
-	if err := r.db.WithContext(ctx).Create(&orders).Error; err != nil {
+	if err := tx.WithContext(ctx).Create(&orders).Error; err != nil {
 		return []entity.Order{}, err
 	}
 	return orders, nil
