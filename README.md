@@ -1,9 +1,8 @@
 # eCommerce API
 - [Getting Started](#getting-started)
   - [Installation](#database-migration)
-  - [Database Migration](#installation)
-  - [Running the Service](#running-the-server)
 - [API Endpoints](#api-endpoints)
+- [Integration Test](#integration-test)
 
 ## Getting Started
 ### Installation
@@ -55,3 +54,8 @@ Below is a list of available API endpoints. For detailed documentation, includin
 | `/api/v1/account/deposit`        | POST       | Deposit funds into the users account  |
 | `/api/v1/account/withdraw`       | POST       | Withdraw funds from the users account |
 | `/api/v1/account`                | GET        | Get the users account balance         |
+
+## Integration Test
+```
+go test -v ./tests/integration-test
+```
