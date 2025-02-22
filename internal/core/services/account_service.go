@@ -10,13 +10,17 @@ import (
 
 type accountService struct {
 	accountRepository ports.IAccountRepository
+	cacheRepository   ports.ICacheRepository
 	sessionCfg        *session.Config
 }
 
-func NewAccountService(sessionCfg *session.Config, accountRepository ports.IAccountRepository) ports.IAccountService {
+func NewAccountService(sessionCfg *session.Config,
+	accountRepository ports.IAccountRepository,
+	cacheRepository ports.ICacheRepository) ports.IAccountService {
 	return &accountService{
 		sessionCfg:        sessionCfg,
 		accountRepository: accountRepository,
+		cacheRepository:   cacheRepository,
 	}
 }
 

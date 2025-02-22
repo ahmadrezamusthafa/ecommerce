@@ -12,6 +12,7 @@ import (
 
 type orderService struct {
 	orderRepository ports.IOrderRepository
+	cacheRepository ports.ICacheRepository
 	cartService     ports.ICartService
 	sessionCfg      *session.Config
 	infraContainer  *InfraContainer
@@ -20,11 +21,13 @@ type orderService struct {
 func NewOrderService(sessionCfg *session.Config,
 	infraContainer *InfraContainer,
 	orderRepository ports.IOrderRepository,
+	cacheRepository ports.ICacheRepository,
 	cartService ports.ICartService) ports.IOrderService {
 	return &orderService{
 		sessionCfg:      sessionCfg,
 		infraContainer:  infraContainer,
 		orderRepository: orderRepository,
+		cacheRepository: cacheRepository,
 		cartService:     cartService,
 	}
 }

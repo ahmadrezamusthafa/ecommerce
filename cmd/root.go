@@ -60,12 +60,13 @@ func start() {
 	cartRepository := repositories.NewCartRepository(db)
 	orderRepository := repositories.NewOrderRepository(db)
 	accountRepository := repositories.NewAccountRepository(db)
+	cacheRepository := repositories.NewCacheRepository(redisCache)
 
 	userService := services.NewUserService(sessionCfg, userRepository)
 	productService := services.NewProductService(sessionCfg, productRepository)
 	cartService := services.NewCartService(sessionCfg, cartRepository)
-	orderService := services.NewOrderService(sessionCfg, infraContainer, orderRepository, cartService)
-	accountService := services.NewAccountService(sessionCfg, accountRepository)
+	orderService := services.NewOrderService(sessionCfg, infraContainer, orderRepository, cacheRepository, cartService)
+	accountService := services.NewAccountService(sessionCfg, accountRepository, cacheRepository)
 
 	serviceContainer := services.NewServiceContainer(userService, productService, cartService, orderService, accountService)
 
