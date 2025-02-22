@@ -20,21 +20,17 @@
    ```bash
    go mod download
    ```
-4. Build the application:
+4. Start infrastructure:
    ```bash
-   go build -o ecommerce
+   make start-infra
    ```
-   
-### Database Migration
-1. Execute migration:
+5. Execute migration:
    ```bash
-   ./ecommerce migrate/up
+   make run-migration
    ```
-   
-### Running the Service
-1. Run the server:
+6. Run the service:
    ```bash
-   ./ecommerce
+   make run-service
    ```
    The service will start on `http://localhost:8005`.
 
