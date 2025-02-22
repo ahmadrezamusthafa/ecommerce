@@ -29,7 +29,7 @@ func (h *ProductHandler) GetAllProducts(c *gin.Context) {
 			logger.Error(string(debug.Stack()))
 			apiresponse.Error(c, http.StatusInternalServerError, "Unhandled exception", apperror.New("got panic exception"))
 		} else if err != nil {
-			apiresponse.Error(c, http.StatusInternalServerError, "Exception", apperror.New(err.Error()))
+			apiresponse.Error(c, http.StatusInternalServerError, err.Error(), apperror.New(err.Error()))
 		}
 	}()
 
@@ -48,7 +48,7 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 			logger.Error(string(debug.Stack()))
 			apiresponse.Error(c, http.StatusInternalServerError, "Unhandled exception", apperror.New("got panic exception"))
 		} else if err != nil {
-			apiresponse.Error(c, http.StatusInternalServerError, "Exception", apperror.New(err.Error()))
+			apiresponse.Error(c, http.StatusInternalServerError, err.Error(), apperror.New(err.Error()))
 		}
 	}()
 
@@ -78,7 +78,7 @@ func (h *ProductHandler) SearchProducts(c *gin.Context) {
 			logger.Error(string(debug.Stack()))
 			apiresponse.Error(c, http.StatusInternalServerError, "Unhandled exception", apperror.New("got panic exception"))
 		} else if err != nil {
-			apiresponse.Error(c, http.StatusInternalServerError, "Exception", apperror.New(err.Error()))
+			apiresponse.Error(c, http.StatusInternalServerError, err.Error(), apperror.New(err.Error()))
 		}
 	}()
 

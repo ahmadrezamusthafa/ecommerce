@@ -57,9 +57,9 @@ func (h *AccountHandler) Withdraw(c *gin.Context) {
 			logger.Error(string(debug.Stack()))
 			apiresponse.Error(c, http.StatusInternalServerError, "Unhandled exception", apperror.New("got panic exception"))
 		} else if err != nil {
-			apiresponse.Error(c, http.StatusInternalServerError, "There is an error", apperror.New(err.Error()))
+			apiresponse.Error(c, http.StatusInternalServerError, err.Error(), apperror.New(err.Error()))
 		} else if bindErr != nil {
-			apiresponse.Error(c, http.StatusBadRequest, "Validation failed", apperror.New(bindErr.Error()))
+			apiresponse.Error(c, http.StatusBadRequest, bindErr.Error(), apperror.New(bindErr.Error()))
 		}
 	}()
 
@@ -93,9 +93,9 @@ func (h *AccountHandler) Deposit(c *gin.Context) {
 			logger.Error(string(debug.Stack()))
 			apiresponse.Error(c, http.StatusInternalServerError, "Unhandled exception", apperror.New("got panic exception"))
 		} else if err != nil {
-			apiresponse.Error(c, http.StatusInternalServerError, "There is an error", apperror.New(err.Error()))
+			apiresponse.Error(c, http.StatusInternalServerError, err.Error(), apperror.New(err.Error()))
 		} else if bindErr != nil {
-			apiresponse.Error(c, http.StatusBadRequest, "Validation failed", apperror.New(bindErr.Error()))
+			apiresponse.Error(c, http.StatusBadRequest, err.Error(), apperror.New(bindErr.Error()))
 		}
 	}()
 
