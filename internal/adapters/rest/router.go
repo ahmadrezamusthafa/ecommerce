@@ -33,6 +33,7 @@ func InitRouter(cfg *config.Configuration,
 	productHandler := handlers.NewProductHandler(serviceContainer)
 	cartHandler := handlers.NewCartHandler(serviceContainer)
 	orderHandler := handlers.NewOrderHandler(serviceContainer)
+	accountHandler := handlers.NewAccountHandler(serviceContainer)
 
 	apiV1 := router.Group("/api/v1")
 
@@ -51,6 +52,9 @@ func InitRouter(cfg *config.Configuration,
 	apiV1.POST("/orders", middlewares.AuthMiddleware(sessionCfg), orderHandler.CreateOrder)
 	apiV1.GET("/orders", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetOrder)
 	apiV1.GET("/orders/top-customers", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetTopCustomers)
+
+	apiV1.POST("/accounts/deposit", middlewares.AuthMiddleware(sessionCfg), accountHandler.Deposit)
+	apiV1.POST("/accounts/withdraw", middlewares.AuthMiddleware(sessionCfg), accountHandler.Withdraw)
 
 	return &Router{
 		Engine:           router,

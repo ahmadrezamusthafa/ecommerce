@@ -34,6 +34,10 @@ func (r *accountRepository) UpdateAccountBalance(ctx context.Context, tx *gorm.D
 	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
+	if tx == nil {
+		tx = r.db
+	}
+
 	var account entity.Account
 	err := tx.WithContext(ctx).FirstOrCreate(&account, entity.Account{UserID: userID}).Error
 	if err != nil {
