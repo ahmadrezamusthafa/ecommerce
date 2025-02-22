@@ -22,7 +22,7 @@ func NewCacheRepository(client *redis.Client) ports.ICacheRepository {
 
 func (r *cacheRepository) GetUserBalance(tx *redis.Tx, userID int) (float64, error) {
 	key := getUserBalanceKey(userID)
-	val, err := r.client.Get(context.Background(), key).Result()
+	val, err := tx.Get(context.Background(), key).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return 0, nil
@@ -34,19 +34,19 @@ func (r *cacheRepository) GetUserBalance(tx *redis.Tx, userID int) (float64, err
 
 func (r *cacheRepository) IncreaseUserBalance(tx *redis.Tx, userID int, amount float64) (float64, error) {
 	key := getUserBalanceKey(userID)
-	result, err := r.client.IncrByFloat(context.Background(), key, amount).Result()
+	result, err := tx.IncrByFloat(context.Background(), key, amount).Result()
 	return result, err
 }
 
 func (r *cacheRepository) DecreaseUserBalance(tx *redis.Tx, userID int, amount float64) (float64, error) {
 	key := getUserBalanceKey(userID)
-	result, err := r.client.IncrByFloat(context.Background(), key, -amount).Result()
+	result, err := tx.IncrByFloat(context.Background(), key, -amount).Result()
 	return result, err
 }
 
 func (r *cacheRepository) SetUserBalance(tx *redis.Tx, userID int, balance float64) (bool, error) {
 	key := getUserBalanceKey(userID)
-	res := r.client.SetNX(context.Background(), key, balance, constants.DefaultTTLUserBalance)
+	res := tx.SetNX(context.Background(), key, balance, constants.DefaultTTLUserBalance)
 	return res.Val(), res.Err()
 }
 

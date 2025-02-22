@@ -9,7 +9,7 @@ database:
   host: "localhost"
   port: 5432
   additional_parameters: "charset=utf8&parseTime=true&loc=Asia%2FJakarta"
-  max_open: 0
+  max_open: 20
   max_idle: 2
   max_lifetime: "4m0s"
 
@@ -22,4 +22,4 @@ cache:
   idle_timeout: 60s
   max_lifetime: 5m
   max_idle: 20
-  max_active: 50
+  max_active: 1000
