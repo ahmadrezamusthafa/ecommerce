@@ -83,6 +83,10 @@ func (s *orderService) GetTopCustomers(ctx context.Context, limit int) ([]entity
 	return orders, nil
 }
 
+func (s *orderService) GetByUserID(ctx context.Context, userID int) ([]entity.Order, error) {
+	return s.orderRepository.GetByUserID(ctx, userID)
+}
+
 func (s *orderService) prepareOrdersFromCart(cart entity.Cart, userID int) ([]entity.Order, error) {
 	var orders []entity.Order
 	for _, cartItem := range cart.Items {

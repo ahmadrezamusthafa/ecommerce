@@ -8,4 +8,5 @@ import (
 type IOrderService interface {
 	CreateOrder(ctx context.Context, userID int) ([]entity.Order, error)
 	GetTopCustomers(ctx context.Context, limit int) ([]entity.CustomerTransaction, error)
+	GetByUserID(ctx context.Context, userID int) ([]entity.Order, error)
 }

@@ -49,6 +49,7 @@ func InitRouter(cfg *config.Configuration,
 	apiV1.DELETE("/cart/items/:id", middlewares.AuthMiddleware(sessionCfg), cartHandler.RemoveItemFromCart)
 
 	apiV1.POST("/orders", middlewares.AuthMiddleware(sessionCfg), orderHandler.CreateOrder)
+	apiV1.GET("/orders", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetOrder)
 	apiV1.GET("/orders/top-customers", middlewares.AuthMiddleware(sessionCfg), orderHandler.GetTopCustomers)
 
 	return &Router{

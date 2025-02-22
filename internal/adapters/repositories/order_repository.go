@@ -19,7 +19,7 @@ func NewOrderRepository(db *gorm.DB) ports.IOrderRepository {
 }
 
 func (r *orderRepository) CreateOrder(ctx context.Context, tx *gorm.DB, orders []entity.Order) ([]entity.Order, error) {
-	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPWriteTimeout)
 	defer cancel()
 
 	if err := tx.WithContext(ctx).Create(&orders).Error; err != nil {
@@ -46,4 +46,13 @@ func (r *orderRepository) GetTopCustomers(ctx context.Context, limit int) ([]ent
 		return nil, err
 	}
 	return orders, nil
+}
+
+func (r *orderRepository) GetByUserID(ctx context.Context, userID int) ([]entity.Order, error) {
+	ctx, cancel := context.WithTimeout(ctx, constants.DefaultHTTPReadTimeout)
+	defer cancel()
+
+	var orders []entity.Order
+	err := r.db.WithContext(ctx).Where("customer_id = ?", userID).Find(&orders).Error
+	return orders, err
 }
