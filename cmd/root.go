@@ -59,13 +59,15 @@ func start() {
 	productRepository := repositories.NewProductRepository(db)
 	cartRepository := repositories.NewCartRepository(db)
 	orderRepository := repositories.NewOrderRepository(db)
+	accountRepository := repositories.NewAccountRepository(db)
 
 	userService := services.NewUserService(sessionCfg, userRepository)
 	productService := services.NewProductService(sessionCfg, productRepository)
 	cartService := services.NewCartService(sessionCfg, cartRepository)
 	orderService := services.NewOrderService(sessionCfg, infraContainer, orderRepository, cartService)
+	accountService := services.NewAccountService(sessionCfg, accountRepository)
 
-	serviceContainer := services.NewServiceContainer(userService, productService, cartService, orderService)
+	serviceContainer := services.NewServiceContainer(userService, productService, cartService, orderService, accountService)
 
 	httpRouter := rest.InitRouter(cfg, sessionCfg, serviceContainer)
 	httpRouter.Run()
